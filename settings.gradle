@@ -1,0 +1,5 @@
+rootProject.name = 'HongikChallenge'
+include 'Api'
+include 'Common'
+include 'Domain'
+include 'Infrastructure'

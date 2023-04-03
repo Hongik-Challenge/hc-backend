@@ -10,3 +10,52 @@ repositories {
 
 bootJar.enabled = false
 jar.enabled = true
+
+allprojects{
+
+}
+
+subprojects {
+    group = 'HongikChallenge'
+    version = '0.0.1-SNAPSHOT'
+    sourceCompatibility = '17'
+
+    repositories {
+        mavenCentral()
+    }
+
+    apply plugin: 'java'
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'java-library'
+    apply plugin: 'io.spring.dependency-management'
+
+    configurations {
+        compileOnly {
+            extendsFrom annotationProcessor
+        }
+    }
+
+    dependencies {
+        compileOnly 'org.projectlombok:lombok'
+        annotationProcessor 'org.projectlombok:lombok'
+        testImplementation 'org.springframework.boot:spring-boot-starter-test'
+        testCompileOnly 'org.projectlombok:lombok'
+        testAnnotationProcessor 'org.projectlombok:lombok'
+        testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+        testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+    }
+
+    tasks.named('test') {
+        useJUnitPlatform()
+    }
+
+    bootJar.enabled = false
+    jar.enabled = true
+
+    wrapper {
+        gradleVersion = '4.4'
+        distributionUrl = distributionUrl.replace("bin", "all")
+    }
+
+    tasks.register("prepareKotlinBuildScriptModel"){}
+}
