@@ -5,6 +5,10 @@ spring:
       - infrastructure
       - domain
       - core
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
 ---
 # dev (서버 개발)
 spring:
