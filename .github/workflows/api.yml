@@ -4,11 +4,10 @@ on:
   pull_request:
     types:
       - closed
-    branches:
-      - dev
 
 jobs:
-  build:
+  if_merged:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -56,3 +55,22 @@ jobs:
 
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
+
+      - name: Application Run
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_KEY }}
+
+          script: |
+            sudo docker kill ${{ secrets.PROJECT_NAME }}
+            sudo docker rm -f ${{ secrets.PROJECT_NAME }}
+            sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.PROJECT_NAME }}:latest
+            
+            sudo docker run -p ${{ secrets.PORT }}:${{ secrets.PORT }} \
+            --name ${{ secrets.PROJECT_NAME }} \
+            -e SPRING_DATASOURCE_URL=${{ secrets.DB_URL }} \
+            -e SPRING_DATASOURCE_USERNAME=${{ secrets.DB_USERNAME }} \
+            -e SPRING_DATASOURCE_PASSWORD=${{ secrets.DB_PASSWORD }} \
+            -d ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.PROJECT_NAME }}

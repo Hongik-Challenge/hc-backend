@@ -8,13 +8,6 @@ spring:
       on-profile: dev
 
 ---
-# qa (테스팅) 환경
-spring:
-  config:
-    activate:
-      on-profile: qa
-
----
 # staging (스테이징)
 spring:
   config:

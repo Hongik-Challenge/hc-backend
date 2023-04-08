@@ -11,8 +11,8 @@ repositories {
     mavenCentral()
 }
 
-bootJar.enabled = false
-jar.enabled = true
+bootJar.enabled = true
+jar.enabled = false
 
 allprojects{
 
@@ -55,8 +55,8 @@ subprojects {
         useJUnitPlatform()
     }
 
-    bootJar.enabled = false
-    jar.enabled = true
+    bootJar.enabled = true
+    jar.enabled = false
 
     wrapper {
         gradleVersion = '4.4'
