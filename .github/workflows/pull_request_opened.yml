@@ -1,8 +1,9 @@
-name: ci
+name: pull_request_opened
 
 on:
   pull_request:
-    branch: 'dev'
+    types:
+      - opened
 
 jobs:
   build:
