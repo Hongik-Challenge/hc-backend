@@ -1,14 +1,18 @@
 # commons (공통)
+server:
+  port: 4040
+
 spring:
+  main:
+    allow-bean-definition-overriding: true
   profiles:
     include:
       - infrastructure
       - domain
-      - core
+      - common
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
-
 ---
 # dev (서버 개발)
 spring:
