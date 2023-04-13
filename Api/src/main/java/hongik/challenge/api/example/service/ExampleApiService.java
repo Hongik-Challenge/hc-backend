@@ -17,7 +17,7 @@ public class ExampleApiService {
         return ExampleResponse.from(query);
     }
 
-    public ExampleResponse createExample(){
+    public ExampleResponse createExample() {
         ExampleEntity qwer = exampleDomainService.exampleSave("qwer");
         return ExampleResponse.from(qwer);
     }

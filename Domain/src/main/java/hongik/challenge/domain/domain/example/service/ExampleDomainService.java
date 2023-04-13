@@ -18,7 +18,10 @@ public class ExampleDomainService {
     public ExampleEntity exampleQuery(Long id) {
         return exampleRepository
                 .findById(id)
-                .orElseThrow(() -> new ExampleCodeException(400, "샘플 오류!", "Example 도메인에서 발생한 샘플 오류입니다."));
+                .orElseThrow(
+                        () ->
+                                new ExampleCodeException(
+                                        400, "샘플 오류!", "Example 도메인에서 발생한 샘플 오류입니다."));
     }
 
     public ExampleEntity exampleSave(String content) {
