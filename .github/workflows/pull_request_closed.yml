@@ -34,24 +34,13 @@ jobs:
       - name: Gradle Build
         uses: gradle/gradle-build-action@v2
 
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: build
-          path: build/classes
-
-      - name: Donwload build artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: build
-          path: build/classes
-
       - name: SonarQube Scan
         uses: kitabisa/sonarqube-action@master
         with:
           host: ${{ secrets.SONAR_HOST }}
           login: ${{ secrets.SONAR_TOKEN }}
           projectBaseDir: '/github/workspace'
+          LC_ALL: "ru_RU.UTF-8"
 
       - name: Execute Gradle build
         run: ./gradlew :Api:build --no-daemon
