@@ -9,6 +9,11 @@ jobs:
   if_merged:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
+    env:
+      SONARQUBE_PROJECT_KEY: ${{secrets.PROJECT_NAME}}
+      SONARQUBE_URL: ${{secrets.SONARQUBE_URL}}
+      SONARQUBE_TOKEN: ${{secrets.SONARQUBE_TOKEN}}
+      PR_NUMBER: ${{github.event.pull_request.number}}
     strategy:
       matrix:
         java-version: [ 17 ]
@@ -33,14 +38,6 @@ jobs:
 
       - name: Gradle Build
         uses: gradle/gradle-build-action@v2
-
-      - name: SonarQube Scan
-        uses: kitabisa/sonarqube-action@master
-        with:
-          host: ${{ secrets.SONAR_HOST }}
-          login: ${{ secrets.SONAR_TOKEN }}
-          projectBaseDir: '/github/workspace'
-          LC_ALL: "ru_RU.UTF-8"
 
       - name: Execute Gradle build
         run: ./gradlew :Api:build --no-daemon
@@ -82,3 +79,13 @@ jobs:
             -e SPRING_DATASOURCE_USERNAME=${{ secrets.DB_USERNAME }} \
             -e SPRING_DATASOURCE_PASSWORD=${{ secrets.DB_PASSWORD }} \
             -d ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.PROJECT_NAME }}
+
+      - name: gradlew permission change
+        run: sudo chmod 755 gradlew
+
+      - name: Sonaqube Analysis
+        run: ./gradlew test sonarqube
+          -Dsonar.host.url=${{ env.SONARQUBE_URL }}
+          -Dsonar.projectKey=${{ env.SONARQUBE_PROJECT_KEY }}
+          -Dsonar.projectName=${{ env.SONARQUBE_PROJECT_KEY }}-${{ env.PR_NUMBER }}
+          -Dsonar.login=${{ env.SONARQUBE_TOKEN }}
