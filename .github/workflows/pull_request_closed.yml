@@ -21,16 +21,6 @@ jobs:
       version: ${{ steps.get_version.outputs.BRANCH_NAME }}
 
     steps:
-      - name: executing remote ssh commands using password
-        uses: appleboy/ssh-action@v0.1.7
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.SSH_KEY }}
-          port: 22
-          script_stop: true
-          script: ls -all
-
       - name: Check Out The Repository
         uses: actions/checkout@v3
 
@@ -79,7 +69,7 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
 
           script: |
-            sudo docker kill ${{ secrets.PROJECT_NAME }}
+            sudo docker stop ${{ secrets.PROJECT_NAME }}
             sudo docker rm -f ${{ secrets.PROJECT_NAME }}
             sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.PROJECT_NAME }}:latest
             
@@ -89,6 +79,8 @@ jobs:
             -e SPRING_DATASOURCE_USERNAME=${{ secrets.DB_USERNAME }} \
             -e SPRING_DATASOURCE_PASSWORD=${{ secrets.DB_PASSWORD }} \
             -d ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.PROJECT_NAME }}
+
+            sudo docker image prune -a
 
       - name: gradlew permission change
         run: sudo chmod 755 gradlew
