@@ -6,63 +6,60 @@ plugins {
     id 'org.sonarqube' version '4.0.0.2929'
 }
 
+apply plugin: 'java-library'
+apply plugin: 'jacoco'
+
+apply from: "$rootDir/jacoco.gradle"
 apply from: "$rootDir/spotless.gradle"
 apply from: "$rootDir/sonarqube.gradle"
 
-repositories {
-    mavenCentral()
+group = 'HongikChallenge'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '17'
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
 }
 
 bootJar.enabled = false
 jar.enabled = true
 
-allprojects{
-
+repositories {
+    mavenCentral()
 }
 
-subprojects {
-    group = 'HongikChallenge'
-    version = '0.0.1-SNAPSHOT'
-    sourceCompatibility = '17'
+dependencies {
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.2'
 
-    repositories {
-        mavenCentral()
-    }
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'io.springfox:springfox-boot-starter:3.0.0'
+    implementation 'io.springfox:springfox-swagger-ui:3.0.0'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
+    implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
-    apply plugin: 'java'
-    apply plugin: 'org.springframework.boot'
-    apply plugin: 'java-library'
-    apply plugin: 'io.spring.dependency-management'
-    apply plugin: 'jacoco'
+    api 'org.springframework.boot:spring-boot-starter-data-jpa'
+    runtimeOnly 'com.h2database:h2'
+    api 'com.mysql:mysql-connector-j'
+}
 
-    apply from: "$rootDir/jacoco.gradle"
+tasks.named('test') {
+    useJUnitPlatform()
+}
 
-    configurations {
-        compileOnly {
-            extendsFrom annotationProcessor
-        }
-    }
-
-    dependencies {
-        compileOnly 'org.projectlombok:lombok'
-        annotationProcessor 'org.projectlombok:lombok'
-        testImplementation 'org.springframework.boot:spring-boot-starter-test'
-        testCompileOnly 'org.projectlombok:lombok'
-        testAnnotationProcessor 'org.projectlombok:lombok'
-        testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
-        testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
-    }
-
-    tasks.named('test') {
-        useJUnitPlatform()
-    }
-
-    wrapper {
-        gradleVersion = '4.4'
-        distributionUrl = distributionUrl.replace("bin", "all")
-    }
-
-    tasks.register("prepareKotlinBuildScriptModel"){}
+wrapper {
+    gradleVersion = '4.4'
+    distributionUrl = distributionUrl.replace("bin", "all")
 }
 
 task installGitHooks(type: Copy) {
